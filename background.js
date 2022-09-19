@@ -13,6 +13,9 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.downloads.onChanged.addListener((downloadItem) => {
     // make sure download is not new 
     // downloads from google drive have issue when pausing is involved so filter them out
+    if (typeof downloads_list === 'undefined') {
+        initialize();
+    }
     const i = downloads_list.findIndex(item => item.id === downloadItem.id);
     if(i> -1 && fromGoogleDrive(downloads_list[i]) == false){
         // checking if download complete or interrupted
