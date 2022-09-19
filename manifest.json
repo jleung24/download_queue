@@ -1,0 +1,21 @@
+{
+	"manifest_version": 3,
+	"name": "Download Queue",
+	"version": "1.1",
+	"author": "Justin Leung",
+	"description": "A queue for downloads.",
+	"icons": {
+		"128": "images/download128.png",
+		"16": "images/download16.png",
+		"32": "images/download32.png",
+		"48": "images/download48.png",
+		"64": "images/download64.png"
+	},
+    "permissions": [
+		"downloads",
+		"storage"
+	],
+	"background": {
+		"service_worker": "background.js"
+	}
+}
