@@ -36,6 +36,16 @@ chrome.downloads.onChanged.addListener((downloadItem) => {
                         }else{
                             console.log('Total downloads: ', downloads_list.length ,'\n')
                         }
+                    }else{
+                        if(typeof downloadItem.paused !== 'undefined' && typeof downloads_list !== 'undefined'){
+                            if(downloadItem.paused.current == true && downloadItem.id == current.id){
+                                chrome.downloads.resume(downloadItem.id);
+                            }else{
+                                if(downloadItem.paused.current == false && downloadItem.id != current.id){
+                                    chrome.downloads.pause(downloadItem.id);
+                                }
+                            }
+                        }
                     }
                 }
             }
