@@ -37,6 +37,7 @@ chrome.downloads.onChanged.addListener((downloadItem) => {
                             console.log('Total downloads: ', downloads_list.length ,'\n')
                         }
                     }else{
+                        // do not let users manually pause or resume downloads
                         if(typeof downloadItem.paused !== 'undefined' && typeof downloads_list !== 'undefined'){
                             if(downloadItem.paused.current == true && downloadItem.id == current.id){
                                 chrome.downloads.resume(downloadItem.id);
