@@ -6,8 +6,16 @@ function initialize() {
     current = "";
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-	initialize();
+chrome.downloads.onCreated.addListener((downloadItem) => {
+    console.log(downloadItem);
+    // filter out google drive downloads
+    // initialize if needed and check download priorities
+    if(typeof downloadItem.finalUrl !== 'undefined' && fromGoogleDrive(downloadItem) == false){
+        if (typeof downloads_list === 'undefined') {
+            initialize();
+        }
+        updateDownloads(downloadItem);
+    }
 })
 
 chrome.downloads.onChanged.addListener((downloadItem) => {
@@ -62,18 +70,6 @@ chrome.downloads.onChanged.addListener((downloadItem) => {
     }
 })
 
-chrome.downloads.onCreated.addListener((downloadItem) => {
-    console.log(downloadItem);
-    // filter out google drive downloads
-    // initialize if needed and check download priorities
-    if(typeof downloadItem.finalUrl !== 'undefined' && fromGoogleDrive(downloadItem) == false){
-        if (typeof downloads_list === 'undefined') {
-            initialize();
-        }
-        updateDownloads(downloadItem);
-    }
-})
-
 function updateDownloads(downloadItem){
     // add new download to download list
     downloads_list.push(downloadItem);
@@ -86,7 +82,6 @@ function updateDownloads(downloadItem){
         checkDownloads();
     }
 }
-
 
 async function checkDownloads(){
     // update download info and search for shortest download
