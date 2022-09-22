@@ -20,31 +20,28 @@ chrome.downloads.onChanged.addListener((downloadItem) => {
     if(i> -1 && fromGoogleDrive(downloads_list[i]) == false){
         // checking if download complete or interrupted
         if(typeof downloadItem.state !== 'undefined' && typeof downloads_list !== 'undefined'){
-            const i = downloads_list.findIndex(item => item.id === downloadItem.id);
-            if(i > -1){
-                // if complete, remove from list and find next download
-                if(downloadItem.state.current == "complete"){
+            // if complete, remove from list and find next download
+            if(downloadItem.state.current == "complete"){
+                downloads_list.splice(i, 1);
+                nextDownloads();  
+            }else{
+                // if interrupted, remove from list
+                // check to see if interrupted download was the current download
+                if(downloadItem.state.current == "interrupted"){
                     downloads_list.splice(i, 1);
-                    nextDownloads();  
-                }else{
-                    // if interrupted, remove from list
-                    // check to see if interrupted download was the current download
-                    if(downloadItem.state.current == "interrupted"){
-                        downloads_list.splice(i, 1);
-                        if(downloadItem.id == current.id){
-                            nextDownloads();  
-                        }else{
-                            console.log('Total downloads: ', downloads_list.length ,'\n')
-                        }
+                    if(downloadItem.id == current.id){
+                        nextDownloads();  
                     }else{
-                        // do not let users manually pause or resume downloads
-                        if(typeof downloadItem.paused !== 'undefined' && typeof downloads_list !== 'undefined'){
-                            if(downloadItem.paused.current == true && downloadItem.id == current.id){
-                                chrome.downloads.resume(downloadItem.id);
-                            }else{
-                                if(downloadItem.paused.current == false && downloadItem.id != current.id){
-                                    chrome.downloads.pause(downloadItem.id);
-                                }
+                        console.log('Total downloads: ', downloads_list.length ,'\n')
+                    }
+                }else{
+                    // do not let users manually pause or resume downloads
+                    if(typeof downloadItem.paused !== 'undefined' && typeof downloads_list !== 'undefined'){
+                        if(downloadItem.paused.current == true && downloadItem.id == current.id){
+                            chrome.downloads.resume(downloadItem.id);
+                        }else{
+                            if(downloadItem.paused.current == false && downloadItem.id != current.id){
+                                chrome.downloads.pause(downloadItem.id);
                             }
                         }
                     }
@@ -110,9 +107,9 @@ function remainingBytes(downloadItem){
     return downloadItem.totalBytes - downloadItem.bytesReceived;
 }
 
-function nextDownloads(){
+async function nextDownloads(){
     //update download info and choose next download if needed
-    updateListAll();
+    await updateListAll();
     if(downloads_list.length == 0){
         current = "";
     }
