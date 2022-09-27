@@ -86,7 +86,9 @@ function updateDownloads(downloadItem){
 async function checkDownloads(){
     // update download info and search for shortest download
     await updateListAll();
-    await updateCurrent();
+    if (typeof current !== 'undefined' && current != "") {
+        await updateCurrent();
+    }
     let current_low = current;
     for(const item of downloads_list){
         if(remainingBytes(item) < remainingBytes(current_low)){
@@ -140,11 +142,10 @@ function updateListAll(){
 
 async function updateCurrent(){
     // update info for the current download
-    if (typeof current !== 'undefined' && current != "") {
-        let id = current.id;
-        let search = await chrome.downloads.search({id});
-        current = search[0];
-    }
+    let id = current.id;
+    let search = await chrome.downloads.search({id});
+    current = search[0];
+
 }
 
 function fromGoogleDrive(downloadItem){
