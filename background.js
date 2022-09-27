@@ -1,4 +1,4 @@
-let downloads_list;
+let downloads_list; // bug: sometimes paused download is removed from list and never resumed
 let current;
 
 function initialize() {
@@ -140,9 +140,11 @@ function updateListAll(){
 
 async function updateCurrent(){
     // update info for the current download
-    let id = current.id;
-    let search = await chrome.downloads.search({id});
-    current = search[0];
+    if (typeof current !== 'undefined' && current != "") {
+        let id = current.id;
+        let search = await chrome.downloads.search({id});
+        current = search[0];
+    }
 }
 
 function fromGoogleDrive(downloadItem){
